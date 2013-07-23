@@ -2,5 +2,5 @@
 require 'spec_helper'
 
 describe Rediline::Timeline do
-  
+
 end

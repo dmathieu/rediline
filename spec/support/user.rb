@@ -2,7 +2,7 @@ class User
   extend ActiveModel::Callbacks
   define_model_callbacks :create, :destroy
   include Rediline::User
-  
+
   rediline :timeline do
     list :egocentric do
       [user]
@@ -11,23 +11,23 @@ class User
       [User.new(15), User.new(16)]
     end
   end
-  
+
   attr_reader   :id
   def initialize(id)
     @id = id
   end
-  
+
   def self.find(id)
     self.new(id)
   end
-  
+
   def create
-    _run_create_callbacks do
+    run_callbacks :create do
       # Your create action methods here
     end
   end
   def destroy
-    _run_destroy_callbacks do
+    run_callbacks :destroy do
       # Your destroy action methods here
     end
   end

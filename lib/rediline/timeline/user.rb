@@ -9,7 +9,7 @@ module Rediline
         @limit, @start_at = 10, 0
         instance_eval(&block)
       end
-      
+
       def each(type)
         raise "you must provide a block" unless block_given?
         (@start_at..@limit).each do |i|
@@ -18,7 +18,7 @@ module Rediline
           yield Rediline::Entry.new(data)
         end
       end
-      
+
       def destroy
         lists.keys.each do |l|
           Rediline.redis.del key(l)
@@ -36,21 +36,21 @@ module Rediline
       def count(type)
         Rediline.redis.llen(key(type))
       end
-      
+
       def list(name, &block)
         @lists[name] = instance_eval(&block)
       end
-      
+
       def limit(count)
         @limit = count
         self
       end
-      
+
       def start_at(count)
         @start_at = count
         self
       end
-      
+
       private
       def key(type)
         "#{field_name.to_s}:#{@user.class.to_s}.#{@user.id.to_s}:#{type}"

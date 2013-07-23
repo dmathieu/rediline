@@ -1,9 +1,9 @@
 module Rediline
   module Object
-    
+
     def self.included(model)
       model.send(:extend, ClassMethods)
-      
+
       model.class_eval do
         private
         def rediline_key(field_name, entry, type, user=nil)
@@ -18,40 +18,40 @@ module Rediline
         end
       end
     end
-    
+
     module ClassMethods
       def rediline(field_name, attrs)
         attrs.symbolize_keys!
         callback = attrs.delete :when
-        
+
         define_method "rediline_#{callback}" do
           if attrs.frozen?
             entry = Rediline::Entry.new(attrs.dup, attrs[:queries])
           else
             attrs[:object] = self
             case attrs[:user]
-              when Symbol, String
-                attrs[:user] = send(attrs[:user])
-              when Proc
-                attrs[:user] = attrs[:user].call(self)
-              when nil
-                attrs[:user] = send(:user)
+            when Symbol, String
+              attrs[:user] = send(attrs[:user])
+            when Proc
+              attrs[:user] = attrs[:user].call(self)
+            when nil
+              attrs[:user] = send(:user)
             end
             attrs.freeze
             entry = Rediline::Entry.new(attrs.dup, attrs[:queries])
           end
-          
+
           entry.user.send(field_name).lists.each_pair do |k, v|
             v.each do |user|
               rediline_insert! entry, rediline_key(field_name, entry, k, user)
             end
           end
-          
+
           true
         end
         send(callback, "rediline_#{callback}")
-      end
-      
+        end
+
     end
   end
 end
